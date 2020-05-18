@@ -3,19 +3,19 @@ Code that has been copied from the www is mentioned in the references file.
 Make sure to check it to get credit.
 """
 
-
 import pathlib
 import os
 import re
 
 
 print("Current directory:", pathlib.Path.cwd())
-os.chdir("/home/test/p/testfolder")
+os.chdir("/home/test/p/patchfolder")
+print("Working directory:", pathlib.Path.cwd())
 
 currentDir = pathlib.Path.cwd()
 
 # print(os.listdir()) # list all files/dirs in current directory
-print()
+#print()
 
 # Grab files *.patch$ in current dir
 patchfiles = [file for file in os.listdir() 
@@ -81,7 +81,8 @@ for patchfiles,diffs in d.items():
 #dumpclean(d)
 
 
+
+#snipped for later use
 #for x in os.walk(cwd):
 #    print(x)
-# nur ein Ergebnis weil nur ein Ordner
-# Tuple mit 3 Feldern: dirpath, dirnames, filenames
+# 3-Tuple: dirpath, dirnames, filenames
