@@ -5,6 +5,7 @@ Make sure to check it to get credit.
 
 # find all patches in directory
 # grab those with multiple targets and split them
+# print a (pretty) table with patches to files linked to each other
 #
 # profit!
 
@@ -103,11 +104,3 @@ for patch in sorted_d:
 
 
 print(x)
-
-
-"""
-for patchfiles,diffs in d_raw.items():
-    print(patchfiles)
-    print(diffs)
-    print()
-"""
