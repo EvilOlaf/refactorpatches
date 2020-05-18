@@ -53,13 +53,13 @@ print('\n' * 3)
 
 
 # sort by target file to patch
-# for later: split patches that affect multiple targets into files
 sorted_d = sorted(d.items(), key=lambda kv: kv[1])
 
-for x in sorted_d:
-    print(x)
+# Print to screen
+#for x in sorted_d:
+#    print(x)
 
-#print(sorted_x)
+
 
 """
 for patchfiles,diffs in d.items():
@@ -68,6 +68,10 @@ for patchfiles,diffs in d.items():
     print()
 """
 
-
+# for later: split patches that affect multiple targets into files
+# grab patches with more than one target
+for i in d:
+    if len(d[i]) > 1:
+        print(len(d[i]), i)
 
 
