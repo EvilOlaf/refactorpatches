@@ -10,7 +10,6 @@ Make sure to check it to get credit.
 
 """
 
-
 import pathlib
 import os
 import re
@@ -25,6 +24,7 @@ print("Working directory:", pathlib.Path.cwd())
 currentDir = pathlib.Path.cwd()
 
 # Grab active patches in current directory
+print("Grabbing all .patch files")
 patchfiles = [file for file in os.listdir()
               if os.path.isfile(os.path.join(currentDir, file))
               if re.search(".patch$", file)
@@ -34,57 +34,68 @@ patchfiles = [file for file in os.listdir()
 # "diff" seem not to be included in all patches
 
 
-def returnDiff(self):
+def returnDiffAsList(self):
     difflist = []
     for line in self:
-        if re.search(r"^\+{3}\sb\/", line):
+        if re.search(r"^\+{3}\s", line):
             line = line.strip('\n')  # strip line break
             difflist.append(line)
     return(difflist)
 
 
+def returnSingleDiff(self):
+    for line in self:
+        if re.search(r"^\+{3}\s", line):
+            output = line.strip('\n')  # strip line break
+    return(output)
+
+
 # bring patch file names and target files together in a dictionary
 d_raw = {}
+print("Collect target file and link to filename")
 for patchfile in patchfiles:
     # print("patchfile:", patchfile) 'DEBUG
     with open(patchfile, encoding="utf-8", errors="replace") as file:
-        diffs = returnDiff(file)
+        diffs = returnDiffAsList(file)
     d_raw[patchfile] = diffs
-
-print('\n' * 3)
 
 if which("splitdiff"):  # check if splitdiff is available
     print("splitdiff found")
-
+    print("splitting patches with multiple file targets into individual patches")
     for patchfile in d_raw:  # grab patches with more than one target
         if len(d_raw[patchfile]) > 1:
             subprocess.call(["splitdiff", "-a", patchfile])  # split them
             # disable old file by renaming
             os.rename(patchfile, patchfile + ".disabled")
+    print("Done. Old files renamed.")
 
 else:
     print("splitdiff not found. Install \"patchutils\" and try again.")
+    print("Skipping splitting")
 
 # scan for patchfiles again
+print("Selection all .patch files (again)")
 patchfiles_splitted = [file for file in os.listdir()
                        if os.path.isfile(os.path.join(currentDir, file))
                        if re.search(".patch$", file)
                        ]
 
 # again bring patchfiles and
+print("Scan for targets again and link information")
 d_splitted = {}
 for patchfile in patchfiles_splitted:
     with open(patchfile, encoding="utf-8", errors="replace") as file:
-        diffs = returnDiff(file)
-    d_splitted[patchfile] = diffs
+        temp = returnSingleDiff(file)
+        d_splitted[patchfile] = temp
 
 # sort by target file to patch
+print("Sorting patches by target file")
 sorted_d = sorted(d_splitted.items(), key=lambda kv: kv[1])
 
-# Print to screen
+print("Patches and target files")
 for x in sorted_d:
-   print(x)
-
+    print(x)
+# print(d_splitted)
 
 """
 for patchfiles,diffs in d_raw.items():
