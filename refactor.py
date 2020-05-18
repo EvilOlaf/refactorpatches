@@ -33,51 +33,30 @@ patchfiles = [file for file in os.listdir()
 def returnDiff(self):
     difflist = []
     for line in self:
-        if re.search("^\+\+\+\sb\/", line): 
+        if re.search(r"^\+{3}\sb\/", line): 
             line = line.strip('\n') #strip line break
             difflist.append(line)
     return(difflist)
 
-"""
-def dumpclean(obj):
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            if hasattr(v, '__iter__'):
-                print(k)
-                dumpclean(v)
-            else:
-                print('%s : %s' % (k, v))
-    elif isinstance(obj, list):
-        for v in obj:
-            if hasattr(v, '__iter__'):
-                dumpclean(v)
-            else:
-                print(v)
-    else:
-        print(obj)
-#dumpclean(d)
-"""
 
-#DEBUG
-#for file in patchfiles:
-#    print(file)
 
-# collect information about patchfiles and diffs
-d = {} #empty dictionary
+
+# bring patch file names and target files together in a dictionary
+d = {}
 for patchfile in patchfiles:
     #print("patchfile:", patchfile) 'DEBUG
     with open(patchfile, encoding="utf-8", errors="replace") as file:
         diffs = returnDiff(file)
     d[patchfile] = diffs
 
-print()
-print()
+print('\n' * 3)
 
 
-# sort by diff
-sortedd = sorted(d.items(), key=lambda kv: kv[1])
+# sort by target file to patch
+# for later: split patches that affect multiple targets into files
+sorted_d = sorted(d.items(), key=lambda kv: kv[1])
 
-for x in sortedd:
+for x in sorted_d:
     print(x)
 
 #print(sorted_x)
