@@ -1,0 +1,23 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/overlay/sun8i-h3-analog-codec.dts
+@@ -0,0 +1,17 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun8i-h3";
++
++	fragment@0 {
++		target = <&codec>;
++		__overlay__ {
++			allwinner,audio-routing =
++				"Line Out", "LINEOUT",
++				"MIC1", "Mic",
++				"Mic",  "MBIAS";
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/overlay/sun8i-h3-cir.dts b/arch/arm/boot/dts/overlay/sun8i-h3-cir.dts
+new file mode 100644
+index 0000000..bf4a0ea

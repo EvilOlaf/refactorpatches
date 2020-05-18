@@ -1,0 +1,19 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/overlay/sun5i-a13-analog-codec.dts
+@@ -0,0 +1,13 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun4i-a13";
++
++	fragment@0 {
++		target = <&codec>;
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/overlay/sun5i-a13-fixup.scr-cmd b/arch/arm/boot/dts/overlay/sun5i-a13-fixup.scr-cmd
+new file mode 100644
+index 0000000..9589767

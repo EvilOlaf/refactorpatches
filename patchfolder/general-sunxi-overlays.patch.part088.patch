@@ -1,0 +1,33 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/overlay/sun8i-h3-usbhost3.dts
+@@ -0,0 +1,27 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun8i-h3";
++
++	fragment@0 {
++		target = <&ehci3>;
++		__overlay__ {
++			status = "okay";
++		};
++	};
++
++	fragment@1 {
++		target = <&ohci3>;
++		 __overlay__ {
++			status = "okay";
++		};
++	};
++
++	fragment@2 {
++		target = <&usbphy>;
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/overlay/sun8i-h3-w1-gpio.dts b/arch/arm/boot/dts/overlay/sun8i-h3-w1-gpio.dts
+new file mode 100644
+index 0000000..f4ccb7f

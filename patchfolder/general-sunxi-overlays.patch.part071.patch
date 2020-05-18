@@ -1,0 +1,21 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/overlay/sun8i-h3-cir.dts
+@@ -0,0 +1,15 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun8i-h3";
++
++	fragment@0 {
++		target = <&ir>;
++		__overlay__ {
++			pinctrl-names = "default";
++			pinctrl-0 = <&r_ir_rx_pin>;
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/overlay/sun8i-h3-fixup.scr-cmd b/arch/arm/boot/dts/overlay/sun8i-h3-fixup.scr-cmd
+new file mode 100644
+index 0000000..142b7e5

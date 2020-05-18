@@ -1,0 +1,28 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/overlay/sun5i-a13-uart3.dts
+@@ -0,0 +1,22 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun5i-a13";
++
++	fragment@0 {
++		target-path = "/aliases";
++		__overlay__ {
++			uart3 = "/soc@1c00000/serial@1c28c00";
++		};
++	};
++
++	fragment@1 {
++		target = <&uart3>;
++		 __overlay__ {
++			pinctrl-names = "default";
++			pinctrl-0 = <&uart3_pg_pins>;
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/overlay/sun7i-a20-analog-codec.dts b/arch/arm/boot/dts/overlay/sun7i-a20-analog-codec.dts
+new file mode 100644
+index 0000000..e1a70c5

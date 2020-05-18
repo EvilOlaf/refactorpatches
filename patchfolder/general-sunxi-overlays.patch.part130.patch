@@ -1,0 +1,33 @@
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/overlay/sun50i-h5-usbhost1.dts
+@@ -0,0 +1,27 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun50i-h5";
++
++	fragment@0 {
++		target = <&ehci1>;
++		__overlay__ {
++			status = "okay";
++		};
++	};
++
++	fragment@1 {
++		target = <&ohci1>;
++		 __overlay__ {
++			status = "okay";
++		};
++	};
++
++	fragment@2 {
++		target = <&usbphy>;
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/allwinner/overlay/sun50i-h5-usbhost2.dts b/arch/arm64/boot/dts/allwinner/overlay/sun50i-h5-usbhost2.dts
+new file mode 100644
+index 0000000..54800e7

@@ -1,0 +1,15 @@
+diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt b/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
+index 41916f69902c..780ebd7e3b84 100644
+--- a/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
++++ b/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
+@@ -4,6 +4,7 @@ Required Properties:
+  - compatible, one of:
+ 			"x-powers,axp209-battery-power-supply"
+ 			"x-powers,axp221-battery-power-supply"
++			"x-powers,axp803-battery-power-supply"
+ 			"x-powers,axp813-battery-power-supply"
+ 
+ This node is a subnode of its respective PMIC DT node.
+-- 
+2.17.1
+

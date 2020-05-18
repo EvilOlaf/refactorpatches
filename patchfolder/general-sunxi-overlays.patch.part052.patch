@@ -1,0 +1,24 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/overlay/sun7i-a20-mmc2.dts
+@@ -0,0 +1,18 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun7i-a20";
++
++	fragment@0 {
++		target = <&mmc2>;
++		__overlay__ {
++			pinctrl-names = "default";
++			pinctrl-0 = <&mmc2_pins>;
++			vmmc-supply = <&reg_vcc3v3>;
++			bus-width = <4>;
++			cd-gpios = <&pio 7 0 1>; /* PH0, active low */
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/overlay/sun7i-a20-nand.dts b/arch/arm/boot/dts/overlay/sun7i-a20-nand.dts
+new file mode 100644
+index 0000000..ffa49cc

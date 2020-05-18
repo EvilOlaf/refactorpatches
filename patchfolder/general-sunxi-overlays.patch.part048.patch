@@ -1,0 +1,28 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/overlay/sun7i-a20-i2c3.dts
+@@ -0,0 +1,22 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun7i-a20";
++
++	fragment@0 {
++		target-path = "/aliases";
++		__overlay__ {
++			i2c3 = "/soc@1c00000/i2c@1c2b800";
++		};
++	};
++
++	fragment@1 {
++		target = <&i2c3>;
++		__overlay__ {
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c3_pins>;
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/overlay/sun7i-a20-i2c4.dts b/arch/arm/boot/dts/overlay/sun7i-a20-i2c4.dts
+new file mode 100644
+index 0000000..4fcf08c

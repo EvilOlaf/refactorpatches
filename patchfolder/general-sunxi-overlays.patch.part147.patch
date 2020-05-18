@@ -1,0 +1,15 @@
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 26e6af4..65b9435 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -65,6 +65,9 @@ real-objs-m := $(foreach m, $(obj-m), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y)
+ extra-y				+= $(dtb-y)
+ extra-$(CONFIG_OF_ALL_DTBS)	+= $(dtb-)
+ 
++# Overlay targets
++extra-y				+= $(dtbo-y) $(scr-y) $(dtbotxt-y)
++
+ # Add subdir path
+ 
+ extra-y		:= $(addprefix $(obj)/,$(extra-y))
+

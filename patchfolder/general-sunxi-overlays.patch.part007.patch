@@ -1,0 +1,19 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/overlay/sun4i-a10-analog-codec.dts
+@@ -0,0 +1,13 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	compatible = "allwinner,sun4i-a10";
++
++	fragment@0 {
++		target = <&codec>;
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/overlay/sun4i-a10-can.dts b/arch/arm/boot/dts/overlay/sun4i-a10-can.dts
+new file mode 100644
+index 0000000..1a9511d
