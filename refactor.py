@@ -85,8 +85,7 @@ print("Scan for targets again and link information")
 d_splitted = {}
 for patchfile in patchfiles_splitted:
     with open(patchfile, encoding="utf-8", errors="replace") as file:
-        temp = returnSingleDiff(file)
-        d_splitted[patchfile] = temp
+        d_splitted[patchfile] = returnSingleDiff(file)
 
 # sort by target file to patch
 print("Sorting patches by target file")
