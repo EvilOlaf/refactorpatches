@@ -21,21 +21,21 @@ currentDir = pathlib.Path.cwd()
 
 # print(os.listdir()) # list all files/dirs in current directory
 
-# Grab files *.patch$ in current dir
+# Grab files *.patch$ in current dir only
 patchfiles = [file for file in os.listdir() 
         if os.path.isfile(os.path.join(currentDir, file))
         if re.search(".patch$", file)
         ]
 
 
-#seek file for diff and return all of them
+#seek a patch file for ^+++ b/ and return all occourances
+# "diff" seem not to be included in all patches
 def returnDiff(self):
     difflist = []
     for line in self:
-        if re.search("^diff\s", line):
-       #if "diff --git" in line:
+        if re.search("^\+\+\+\sb\/", line): 
+            line = line.strip('\n') #strip line break
             difflist.append(line)
-    #print("difflist:", difflist) #DEBUG
     return(difflist)
 
 """
