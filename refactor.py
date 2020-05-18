@@ -15,6 +15,7 @@ import os
 import re
 import subprocess
 from shutil import which
+from prettytable import PrettyTable
 
 
 print("Current directory:", pathlib.Path.cwd())
@@ -92,9 +93,16 @@ print("Sorting patches by target file")
 sorted_d = sorted(d_splitted.items(), key=lambda kv: kv[1])
 
 print("Patches and target files")
-for x in sorted_d:
-    print(x)
-# print(d_splitted)
+x = PrettyTable()
+x.field_names = ["Patch file", "target file"]
+x.align["Patch file"] = "l"
+x.align["target file"] = "l"
+
+for patch in sorted_d:
+    x.add_row([patch[0], patch[1]])
+
+
+print(x)
 
 
 """
