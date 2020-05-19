@@ -17,26 +17,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import pathlib
+
+from pathlib import Path
 import os
 import re
 import subprocess
 from shutil import which
 import readline
 
+# necessary for tab completion user input
 readline.set_completer_delims(' \t\n=')
 readline.parse_and_bind("tab: complete")
 
-print("Current directory:", pathlib.Path.cwd())
+print("Current directory:", Path.cwd())
 
-os.chdir(os.path.join(pathlib.Path.cwd(),
+os.chdir(os.path.join(Path.cwd(),
                       input("Select patch folder (you can tab-complete): ")))
-print("Working directory is now:", pathlib.Path.cwd())
+print("Working directory is now:", Path.cwd())
 
 
 print("Grabbing all .patch files")
 PatchFilesInFolder = [file for file in os.listdir()
-                      if os.path.isfile(os.path.join(pathlib.Path.cwd(), file))
+                      if os.path.isfile(os.path.join(Path.cwd(), file))
                       if re.search(".patch$", file)
                       ]
 
@@ -52,7 +54,7 @@ def returnAllDiffsAsTuple(self):
 
 
 def returnSingleDiff(self):
-    # a patch file for '^+++ ' and return the occurrence
+    # seek a patch file for '^+++ ' and return the occurrence
     for line in self:
         if re.search(r"^\+{3}\s", line):
             return(line.strip('\n'))
@@ -81,16 +83,14 @@ else:
     print("splitdiff not found. Install \"patchutils\" and try again.")
     print("Skipping splitting")
 
-# scan for PatchFilesInFolder
-# again
+# scan for patches again
 print("Selection all .patch files (again)")
 patchfiles_splitted = [file for file in os.listdir()
-                       if os.path.isfile(os.path.join(pathlib.Path.cwd(), file))
+                       if os.path.isfile(os.path.join(Path.cwd(), file))
                        if re.search(".patch$", file)
                        ]
 
-# again bring PatchFilesInFolder
-# and
+# again bring patches and target files together
 print("Scan for targets again and link information")
 d_splitted = {}
 for patchfile in patchfiles_splitted:
@@ -102,5 +102,28 @@ print("Sorting patches by target file")
 sorted_d = sorted(d_splitted.items(), key=lambda kv: kv[1])
 
 #Print table, format values should be dynamic in future
-for patch in sorted_d:
-    print('{:<95s}{:<70s}'.format(patch[0], patch[1]))
+#for patch in sorted_d:
+#    print('{:<95s}{:<70s}'.format(patch[0], patch[1]))
+
+
+# search for target file matches
+
+def yield_lines():
+    for line in sorted_d:
+        yield line
+
+gen1 = yield_lines()
+
+for _ in gen1:
+    a = next(gen1)
+    b = next(gen1)
+    if a == b:
+        print("Match")
+    print(a[1], b[1])
+    break
+
+
+"""
+print(next(gen1))
+print(next(gen1))
+print(next(gen1))"""
