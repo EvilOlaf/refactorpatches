@@ -16,56 +16,57 @@ import os
 import re
 import subprocess
 from shutil import which
-from prettytable import PrettyTable
+from prettytable import PrettyTable  # try to remove this dependency again
+import readline
 
+readline.set_completer_delims(' \t\n=')
+readline.parse_and_bind("tab: complete")
 
 print("Current directory:", pathlib.Path.cwd())
-os.chdir(os.path.join(pathlib.Path.cwd(), "patchfolder"))
-print("Working directory:", pathlib.Path.cwd())
 
-currentDir = pathlib.Path.cwd()
+os.chdir(os.path.join(pathlib.Path.cwd(),
+                      input("Select patch folder (you can tab-complete): ")))
+print("Working directory is now:", pathlib.Path.cwd())
 
-# Grab active patches in current directory
+
 print("Grabbing all .patch files")
-patchfiles = [file for file in os.listdir()
-              if os.path.isfile(os.path.join(currentDir, file))
-              if re.search(".patch$", file)
-              ]
-
-# seek a patch file for ^+++ b/ and return all occurrences
-# "diff" seem not to be included in all patches
+PatchFilesInFolder = [file for file in os.listdir()
+                      if os.path.isfile(os.path.join(pathlib.Path.cwd(), file))
+                      if re.search(".patch$", file)
+                      ]
 
 
-def returnDiffAsList(self):
+def returnAllDiffsAsTuple(self):
+    # seek a patch file for '^+++ ' and return all occurrences
+    # "diff" seem not to be included in all patches
     difflist = []
     for line in self:
         if re.search(r"^\+{3}\s", line):
-            line = line.strip('\n')  # strip line break
-            difflist.append(line)
-    return(difflist)
+            difflist.append(line.strip('\n'))  # append and strip line break
+    return(tuple(difflist))
 
 
 def returnSingleDiff(self):
+    # a patch file for '^+++ ' and return the occurrence
     for line in self:
         if re.search(r"^\+{3}\s", line):
-            output = line.strip('\n')  # strip line break
-    return(output)
+            return(line.strip('\n'))
 
 
 # bring patch file names and target files together in a dictionary
-d_raw = {}
+patchDictBefore = {}
 print("Collect target file and link to filename")
-for patchfile in patchfiles:
+for patchfile in PatchFilesInFolder:
     # print("patchfile:", patchfile) 'DEBUG
     with open(patchfile, encoding="utf-8", errors="replace") as file:
-        diffs = returnDiffAsList(file)
-    d_raw[patchfile] = diffs
+        diffs = returnAllDiffsAsTuple(file)
+    patchDictBefore[patchfile] = diffs
 
 if which("splitdiff"):  # check if splitdiff is available
     print("splitdiff found")
     print("splitting patches with multiple file targets into individual patches")
-    for patchfile in d_raw:  # grab patches with more than one target
-        if len(d_raw[patchfile]) > 1:
+    for patchfile in patchDictBefore:  # grab patches with more than one target
+        if len(patchDictBefore[patchfile]) > 1:
             subprocess.call(["splitdiff", "-a", patchfile])  # split them
             # disable old file by renaming
             os.rename(patchfile, patchfile + ".disabled")
@@ -75,14 +76,16 @@ else:
     print("splitdiff not found. Install \"patchutils\" and try again.")
     print("Skipping splitting")
 
-# scan for patchfiles again
+# scan for PatchFilesInFolder
+# again
 print("Selection all .patch files (again)")
 patchfiles_splitted = [file for file in os.listdir()
-                       if os.path.isfile(os.path.join(currentDir, file))
+                       if os.path.isfile(os.path.join(pathlib.Path.cwd(), file))
                        if re.search(".patch$", file)
                        ]
 
-# again bring patchfiles and
+# again bring PatchFilesInFolder
+# and
 print("Scan for targets again and link information")
 d_splitted = {}
 for patchfile in patchfiles_splitted:
