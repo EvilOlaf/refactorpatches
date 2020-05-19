@@ -16,7 +16,6 @@ import os
 import re
 import subprocess
 from shutil import which
-from prettytable import PrettyTable  # try to remove this dependency again
 import readline
 
 readline.set_completer_delims(' \t\n=')
@@ -96,14 +95,6 @@ for patchfile in patchfiles_splitted:
 print("Sorting patches by target file")
 sorted_d = sorted(d_splitted.items(), key=lambda kv: kv[1])
 
-print("Patches and target files")
-x = PrettyTable()
-x.field_names = ["Patch file", "target file"]
-x.align["Patch file"] = "l"
-x.align["target file"] = "l"
-
+#Print table, format values should be dynamic in future
 for patch in sorted_d:
-    x.add_row([patch[0], patch[1]])
-
-
-print(x)
+    print('{:<95s}{:<70s}'.format(patch[0], patch[1]))
