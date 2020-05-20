@@ -17,6 +17,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+
 from pathlib import Path
 import os
 import re
@@ -24,8 +25,18 @@ import subprocess
 from shutil import which
 import readline
 
+# print a list of patches sorted by their (first) target
+# print a list of patches splitted and sorted into their targets
+# print matches
+# merge patches
+# a better code structure....
+
+# add command line parameters
+# target folder
+# what to do with it
+
 print("Current directory:", Path.cwd())
- 
+
 foldersInCwd = ([a for a in os.listdir(".") if os.path.isdir(a)])
 print()
 for folder in foldersInCwd:
@@ -109,16 +120,18 @@ sorted_d = sorted(d_splitted.items(), key=lambda kv: kv[1])
 # Print table, format values should be dynamic in future
 # for patch in sorted_d:
 
-#    print('{:<95s}{:<70s}'.format(patch[0], patch[1])) 
+#    print('{:<95s}{:<70s}'.format(patch[0], patch[1]))
 
 
 # search for target file matches
 def yield_lines():
     for line in sorted_d:
         yield line
+
+
 gen1 = yield_lines()
 
-#prefeed comparator
+# prefeed comparator
 patchTupleA = next(gen1)
 patchTupleB = next(gen1)
 patcha = patchTupleA[0]
@@ -128,28 +141,22 @@ targetB = patchTupleB[1]
 for _ in gen1:
     if targetA == targetB:
         print("Match found:", patcha, patchb, "->", targetA)
-        while True:
-            merge = input("Merge? (y/n)")
-            if merge == "y":
-                print("Okay")
-                pass
-                break
-            elif merge == "n":
-                print("Skipping")
-                break
-            else:
-                print("y or n???")
-
+#        while True:
+#            merge = input("Merge? (y/n)")
+#            if merge == "y":
+#                print("Okay")
+#                pass
+#                break
+#            elif merge == "n":
+#                print("Skipping")
+#                break
+#            else:
+#                print("y or n???")
     else:
         pass
-    targetA = targetB           #shift b to a
+    targetA = targetB  # shift b to a
     patchTupleA = patchTupleB
     patcha = patchb
-    patchTupleB = next(gen1)    #refill b
+    patchTupleB = next(gen1)  # refill b
     patchb = patchTupleB[0]
     targetB = patchTupleB[1]
-
-"""
-print(next(gen1))
-print(next(gen1))
-print(next(gen1))"""
