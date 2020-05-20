@@ -17,7 +17,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-
 from pathlib import Path
 import os
 import re
@@ -25,11 +24,17 @@ import subprocess
 from shutil import which
 import readline
 
+print("Current directory:", Path.cwd())
+ 
+foldersInCwd = ([a for a in os.listdir(".") if os.path.isdir(a)])
+print()
+for folder in foldersInCwd:
+    print(folder)
+print()
+
 # necessary for tab completion user input
 readline.set_completer_delims(' \t\n=')
 readline.parse_and_bind("tab: complete")
-
-print("Current directory:", Path.cwd())
 
 os.chdir(os.path.join(Path.cwd(),
                       input("Select patch folder (you can tab-complete): ")))
@@ -101,27 +106,48 @@ for patchfile in patchfiles_splitted:
 print("Sorting patches by target file")
 sorted_d = sorted(d_splitted.items(), key=lambda kv: kv[1])
 
-#Print table, format values should be dynamic in future
-#for patch in sorted_d:
-#    print('{:<95s}{:<70s}'.format(patch[0], patch[1]))
+# Print table, format values should be dynamic in future
+# for patch in sorted_d:
+
+#    print('{:<95s}{:<70s}'.format(patch[0], patch[1])) 
 
 
 # search for target file matches
-
 def yield_lines():
     for line in sorted_d:
         yield line
-
 gen1 = yield_lines()
 
+#prefeed comparator
+patchTupleA = next(gen1)
+patchTupleB = next(gen1)
+patcha = patchTupleA[0]
+patchb = patchTupleB[0]
+targetA = patchTupleA[1]
+targetB = patchTupleB[1]
 for _ in gen1:
-    a = next(gen1)
-    b = next(gen1)
-    if a == b:
-        print("Match")
-    print(a[1], b[1])
-    break
+    if targetA == targetB:
+        print("Match found:", patcha, patchb, "->", targetA)
+        while True:
+            merge = input("Merge? (y/n)")
+            if merge == "y":
+                print("Okay")
+                pass
+                break
+            elif merge == "n":
+                print("Skipping")
+                break
+            else:
+                print("y or n???")
 
+    else:
+        pass
+    targetA = targetB           #shift b to a
+    patchTupleA = patchTupleB
+    patcha = patchb
+    patchTupleB = next(gen1)    #refill b
+    patchb = patchTupleB[0]
+    targetB = patchTupleB[1]
 
 """
 print(next(gen1))
