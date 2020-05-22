@@ -25,15 +25,21 @@ import subprocess
 from shutil import which
 import readline
 
-# print a list of patches sorted by their (first) target
-# print a list of patches splitted and sorted into their targets
-# print matches
-# merge patches
 # a better code structure....
-
 # add command line parameters
-# target folder
-# what to do with it
+## target folder
+## what to do with it
+
+# 1. ask user what to do
+# 1.1 print list of patches sorted by their first target
+# 1.2 print list of patches after splitting and sorting by their targets
+# 1.3 print list of targets that are affected by 2 or more patches
+# 2. ask user for directory
+# 3. do the work
+# 4. ask if save we should save the output to file
+# 5. goto 1 or exit
+
+
 
 print("Current directory:", Path.cwd())
 
