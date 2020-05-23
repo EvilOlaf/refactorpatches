@@ -27,8 +27,9 @@ import readline
 
 # a better code structure....
 # add command line parameters
-## target folder
-## what to do with it
+# target folder
+# what to do with it
+# possibility to add absolute path
 
 # 1. ask user what to do
 # 1.1 print list of patches sorted by their first target
@@ -40,29 +41,7 @@ import readline
 # 5. goto 1 or exit
 
 
-
-print("Current directory:", Path.cwd())
-
-foldersInCwd = ([a for a in os.listdir(".") if os.path.isdir(a)])
-print()
-for folder in foldersInCwd:
-    print(folder)
-print()
-
-# necessary for tab completion user input
-readline.set_completer_delims(' \t\n=')
-readline.parse_and_bind("tab: complete")
-
-os.chdir(os.path.join(Path.cwd(),
-                      input("Select patch folder (you can tab-complete): ")))
-print("Working directory is now:", Path.cwd())
-
-
-print("Grabbing all .patch files")
-PatchFilesInFolder = [file for file in os.listdir()
-                      if os.path.isfile(os.path.join(Path.cwd(), file))
-                      if re.search(".patch$", file)
-                      ]
+# Definitions
 
 
 def returnAllDiffsAsTuple(self):
@@ -82,46 +61,130 @@ def returnSingleDiff(self):
             return(line.strip('\n'))
 
 
-# bring patch file names and target files together in a dictionary
-patchDictBefore = {}
-print("Collect target file and link to filename")
-for patchfile in PatchFilesInFolder:
-    # print("patchfile:", patchfile) 'DEBUG
-    with open(patchfile, encoding="utf-8", errors="replace") as file:
-        diffs = returnAllDiffsAsTuple(file)
-    patchDictBefore[patchfile] = diffs
+# Main loop
+print("""
+Patch comparison
 
-if which("splitdiff"):  # check if splitdiff is available
-    print("splitdiff found")
-    print("splitting patches with multiple file targets into individual patches")
-    for patchfile in patchDictBefore:  # grab patches with more than one target
-        if len(patchDictBefore[patchfile]) > 1:
-            subprocess.call(["splitdiff", "-a", patchfile])  # split them
-            # disable old file by renaming
-            os.rename(patchfile, patchfile + ".disabled")
-    print("Done. Old files renamed.")
+Options:
+1 = print list of patches sorted by their first target
+2 = print list of patches after splitting and sorting by their targets
+3 = print list of targets that are affected by 2 or more patches 
 
-else:
-    print("splitdiff not found. Install \"patchutils\" and try again.")
-    print("Skipping splitting")
+0 = exit
+""")
 
-# scan for patches again
-print("Selection all .patch files (again)")
-patchfiles_splitted = [file for file in os.listdir()
-                       if os.path.isfile(os.path.join(Path.cwd(), file))
-                       if re.search(".patch$", file)
-                       ]
 
-# again bring patches and target files together
-print("Scan for targets again and link information")
-d_splitted = {}
-for patchfile in patchfiles_splitted:
-    with open(patchfile, encoding="utf-8", errors="replace") as file:
-        d_splitted[patchfile] = returnSingleDiff(file)
+while True:
+    mainInput = input("Enter a number: ")  # Select what to do
+    if not mainInput == "0":  # for any step we need a working directory
+        print("Current directory:", Path.cwd())
+        foldersInCwd = ([a for a in os.listdir(".") if os.path.isdir(a)])
+        print()
+        for folder in foldersInCwd:
+            print(folder)
+        print()
 
-# sort by target file to patch
-print("Sorting patches by target file")
-sorted_d = sorted(d_splitted.items(), key=lambda kv: kv[1])
+        # necessary for tab completion user input
+        readline.set_completer_delims(' \t\n=')
+        readline.parse_and_bind("tab: complete")
+
+        try:
+            os.chdir(os.path.join(Path.cwd(),
+                                  input("Select patch folder (you can tab-complete): ")))
+        except:
+            print("That did not work :(")
+            exit()
+        print("Working directory is now:", Path.cwd())
+        print()
+
+        # for any step we need the patchlist beforehand
+        print("Grabbing all .patch files", end='')
+        PatchFilesInFolder = [file for file in os.listdir()
+                              if os.path.isfile(os.path.join(Path.cwd(), file))
+                              if re.search(".patch$", file)
+                              ]
+        print(" - OK")
+
+        # create dictionary with
+        # value : patchfile name
+        # key/s : target file/s
+        # for any step we need this dictionary
+        patchDictBefore = {}
+        print("Collect target file and link to filename", end='')
+        for patchfile in PatchFilesInFolder:
+            with open(patchfile, encoding="utf-8", errors="replace") as file:
+                diffs = returnAllDiffsAsTuple(file)
+                patchDictBefore[patchfile] = diffs
+        print(" - OK")
+
+    if mainInput == "1":  # print list of patches sorted by their first target
+        sortedpatchDictBefore = sorted(
+            patchDictBefore.items(), key=lambda kv: kv[1])
+        print("\nOutput is sorted by target file. If a patch contains")
+        print("multiple targets the first match is relevant.\n\n")
+        for item in sortedpatchDictBefore:
+            print(item[0], "->", item[1])
+        print("\n\n")
+
+    elif mainInput == "2":  # print list of patches after breaking them down
+        # into their targets and sort it their targets
+        if which("splitdiff"):  # check if splitdiff is available
+            print("Splitting patches with multiple targets into individual patches.")
+            warning = input("This cannot be undone. Proceed? (y/n): ")
+            if not warning == "y":
+                print("Aborting...")
+                exit()
+
+            print("OK. Started splitting...")
+            for patchfile in patchDictBefore:  # grab patches with more than one target
+                if len(patchDictBefore[patchfile]) > 1:
+                    subprocess.call(
+                        ["splitdiff", "-a", patchfile])  # split them
+                    # disable old file by renaming
+                    os.rename(patchfile, patchfile + ".splitted")
+            print("Done. Old files have been renamed to \"*.splitted\"")
+
+            print("Grabbing all .patch files", end='')
+            patchfiles_splitted = [file for file in os.listdir()
+                                   if os.path.isfile(os.path.join(Path.cwd(), file))
+                                   if re.search(".patch$", file)
+                                   ]
+            print(" Done.")
+
+            # bring patches and target files together
+            print("Collect target file and link to filename", end='')
+            splittedPatchDict = {}
+            for patchfile in patchfiles_splitted:
+                with open(patchfile, encoding="utf-8", errors="replace") as file:
+                    splittedPatchDict[patchfile] = returnSingleDiff(file)
+            print(" Done.")
+
+            sortedSplittedPatchDict = sorted(
+                splittedPatchDict.items(), key=lambda kv: kv[1])
+            print("\nOutput is sorted by target file.\n\n")
+            for item in sortedSplittedPatchDict:
+                print(item[0], "->", item[1])
+            print("\n\n")
+
+        else:
+            print(
+                "\"splitdiff\" not found. Install \"patchutils\" package and try again.")
+            print("Exiting")
+            exit()
+
+    elif mainInput == "3":
+        print("Not there yet"), exit()
+
+    elif mainInput == "0":
+        print("Aight, exiting. Thank you for flying with Werner Enterprises.")
+        exit()
+
+    else:
+        mainInput = input("Invalid input. Enter a number: ")
+
+
+exit()
+
 
 # Print table, format values should be dynamic in future
 # for patch in sorted_d:
