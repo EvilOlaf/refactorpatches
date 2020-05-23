@@ -1,8 +1,0 @@
---- /dev/null
-+++ b/drivers/net/wireless/realtek/rtl8723cs/include/rtw_version.h
-@@ -0,0 +1,2 @@
-+#define DRIVERVERSION	"v4.3.22.9_16440.20151221_BTCOEX20151214-0700"
-+#define BTCOEXVERSION	"BTCOEX20151214-0700"
-diff --git a/drivers/net/wireless/realtek/rtl8723cs/include/rtw_vht.h b/drivers/net/wireless/realtek/rtl8723cs/include/rtw_vht.h
-new file mode 100644
-index 00000000..def791ab

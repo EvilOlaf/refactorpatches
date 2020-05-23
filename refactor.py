@@ -18,6 +18,7 @@
 """
 
 
+from prettytable import PrettyTable
 from pathlib import Path
 import os
 import re
@@ -31,6 +32,7 @@ import readline
 # what to do with it
 # possibility to add absolute path
 # fix patches where no targets found
+# necessary information if patch creates a new file or editing an existing one?
 
 # 1. ask user what to do
 # 1.1 print list of patches sorted by their first target
@@ -51,7 +53,8 @@ def returnAllDiffsAsTuple(self):
     difflist = []
     for line in self:
         if re.search(r"^\+{3}\s", line):
-            difflist.append(line.strip('\n'))  # append and strip line break
+            # append and strip line break
+            difflist.append(line.strip('\n').strip("+++ b"))
     return(tuple(difflist))
 
 
@@ -59,7 +62,7 @@ def returnSingleDiff(self):
     # seek a patch file for '^+++ ' and return the occurrence
     for line in self:
         if re.search(r"^\+{3}\s", line):
-            return(line.strip('\n'))
+            return(line.strip('\n').strip("+++ b"))
 
 
 # Main loop
@@ -104,7 +107,7 @@ while True:
                               if os.path.isfile(os.path.join(Path.cwd(), file))
                               if re.search(".patch$", file)
                               ]
-        print(" - OK")
+        print(" - OK. Found", len(PatchFilesInFolder), "patches.")
 
         # create dictionary with
         # value : patchfile name
@@ -163,13 +166,20 @@ while True:
             sortedSplittedPatchDict = sorted(
                 splittedPatchDict.items(), key=lambda kv: kv[1])
             print("\nOutput is sorted by target file.\n\n")
+#            for item in sortedSplittedPatchDict:
+#                print(item[0], "->", item[1])
+            x = PrettyTable()
+            x.field_names = ["Patch file", "target file"]
+            x.align["Patch file"] = "l"
+            x.align["target file"] = "l"
             for item in sortedSplittedPatchDict:
-                print(item[0], "->", item[1])
+                x.add_row([item[0], item[1]])
+            print(x)
             print("\n\n")
 
             print("I can filter this list and show only files that are")
             print("target of multiple patches so you could merge them.")
-            if input("Should I do that? (y/n)") == "y":
+            if input("Should I do that? (y/n) ") == "y":
                 def yield_lines():
                     for line in sortedSplittedPatchDict:
                         yield line
@@ -204,6 +214,7 @@ while True:
                     patchTupleB = next(gen1)  # refill b
                     patchb = patchTupleB[0]
                     targetB = patchTupleB[1]
+            print("\n\n")
 
         else:
             print(
@@ -229,3 +240,13 @@ exit()
 
 
 # search for target file matches
+
+"""
+        x = PrettyTable()
+        x.field_names = ["Patch file", "target file"]
+        x.align["Patch file"] = "l"
+        x.align["target file"] = "l"
+        for item in sortedpatchDictBefore:
+            x.add_row([item[0], item[1]])
+        print(x)
+"""
