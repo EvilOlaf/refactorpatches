@@ -30,6 +30,7 @@ import readline
 # target folder
 # what to do with it
 # possibility to add absolute path
+# fix patches where no targets found
 
 # 1. ask user what to do
 # 1.1 print list of patches sorted by their first target
@@ -68,7 +69,7 @@ Patch comparison
 Options:
 1 = print list of patches sorted by their first target
 2 = print list of patches after splitting and sorting by their targets
-3 = print list of targets that are affected by 2 or more patches 
+    and optionally filter by files targeted by 2 or more patches 
 
 0 = exit
 """)
@@ -166,14 +167,49 @@ while True:
                 print(item[0], "->", item[1])
             print("\n\n")
 
+            print("I can filter this list and show only files that are")
+            print("target of multiple patches so you could merge them.")
+            if input("Should I do that? (y/n)") == "y":
+                def yield_lines():
+                    for line in sortedSplittedPatchDict:
+                        yield line
+                gen1 = yield_lines()
+
+                # prefeed comparator
+                patchTupleA = next(gen1)
+                patchTupleB = next(gen1)
+                patcha = patchTupleA[0]
+                patchb = patchTupleB[0]
+                targetA = patchTupleA[1]
+                targetB = patchTupleB[1]
+                for _ in gen1:
+                    if targetA == targetB:
+                        print("Match found:", patcha, patchb, "->", targetA)
+                #        while True:
+                #            merge = input("Merge? (y/n)")
+                #            if merge == "y":
+                #                print("Okay")
+                #                pass
+                #                break
+                #            elif merge == "n":
+                #                print("Skipping")
+                #                break
+                #            else:
+                #                print("y or n???")
+                    else:
+                        pass
+                    targetA = targetB  # shift b to a
+                    patchTupleA = patchTupleB
+                    patcha = patchb
+                    patchTupleB = next(gen1)  # refill b
+                    patchb = patchTupleB[0]
+                    targetB = patchTupleB[1]
+
         else:
             print(
                 "\"splitdiff\" not found. Install \"patchutils\" package and try again.")
             print("Exiting")
             exit()
-
-    elif mainInput == "3":
-        print("Not there yet"), exit()
 
     elif mainInput == "0":
         print("Aight, exiting. Thank you for flying with Werner Enterprises.")
@@ -193,39 +229,3 @@ exit()
 
 
 # search for target file matches
-def yield_lines():
-    for line in sorted_d:
-        yield line
-
-
-gen1 = yield_lines()
-
-# prefeed comparator
-patchTupleA = next(gen1)
-patchTupleB = next(gen1)
-patcha = patchTupleA[0]
-patchb = patchTupleB[0]
-targetA = patchTupleA[1]
-targetB = patchTupleB[1]
-for _ in gen1:
-    if targetA == targetB:
-        print("Match found:", patcha, patchb, "->", targetA)
-#        while True:
-#            merge = input("Merge? (y/n)")
-#            if merge == "y":
-#                print("Okay")
-#                pass
-#                break
-#            elif merge == "n":
-#                print("Skipping")
-#                break
-#            else:
-#                print("y or n???")
-    else:
-        pass
-    targetA = targetB  # shift b to a
-    patchTupleA = patchTupleB
-    patcha = patchb
-    patchTupleB = next(gen1)  # refill b
-    patchb = patchTupleB[0]
-    targetB = patchTupleB[1]
