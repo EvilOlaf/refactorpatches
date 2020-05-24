@@ -28,7 +28,7 @@ import readline
 import sys
 
 try:
-    assert sys.version_info >= (3, 8, 3)
+    assert sys.version_info >= (3, 8, 2)
 except:
     print("\n===============================================================")
     print("This script has been written and tested with Python 3.8.2 only.")
