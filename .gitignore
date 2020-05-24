@@ -8,7 +8,10 @@ __pycache__/*
 .test/*
 patchfolder*
 patchfolder.*
-various
+*-dev
+*-current
+*-legacy
+
 
 # Local History for Visual Studio Code
 .history/

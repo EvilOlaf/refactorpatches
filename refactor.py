@@ -198,7 +198,10 @@ while True:
 
             print("I can filter this list and show only files that are")
             print("target of multiple patches so you could merge them.")
+            print("(Consider this feature experimental but safe to use)")
             if input("Should I do that? (y/n) ") == "y":
+                print()
+
                 def yield_lines():
                     for line in sortedSplittedPatchDict:
                         yield line
@@ -212,28 +215,18 @@ while True:
                 targetA = patchTupleA[1]
                 targetB = patchTupleB[1]
                 for _ in gen1:
-                    if targetA == targetB:
-                        print("Match found:", patcha, patchb, "->", targetA)
-                #        while True:
-                #            merge = input("Merge? (y/n)")
-                #            if merge == "y":
-                #                print("Okay")
-                #                pass
-                #                break
-                #            elif merge == "n":
-                #                print("Skipping")
-                #                break
-                #            else:
-                #                print("y or n???")
-                    else:
-                        pass
-                    targetA = targetB  # shift b to a
-                    patchTupleA = patchTupleB
-                    patcha = patchb
-                    patchTupleB = next(gen1)  # refill b
-                    patchb = patchTupleB[0]
-                    targetB = patchTupleB[1]
-            print("\n\n")
+                    try:
+                        if targetA == targetB:
+                            print(patcha + ",", patchb, "->", targetA)
+                        targetA = targetB  # shift b to a
+                        patchTupleA = patchTupleB
+                        patcha = patchb
+                        patchTupleB = next(gen1)  # refill b
+                        patchb = patchTupleB[0]
+                        targetB = patchTupleB[1]
+                    except:
+                        pass  # not sure what causes this to fail on some folders
+            print("\n")
 
         else:
             print(
