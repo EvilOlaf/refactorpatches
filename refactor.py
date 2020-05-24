@@ -25,6 +25,15 @@ import re
 import subprocess
 from shutil import which
 import readline
+import sys
+
+try:
+    assert sys.version_info >= (3, 8, 3)
+except:
+    print("\n===============================================================")
+    print("This script has been written and tested with Python 3.8.2 only.")
+    print("Feel free to try with other versions.")
+    print("===============================================================")
 
 # a better code structure....
 # add command line parameters
@@ -70,11 +79,21 @@ print("""
 Patch comparison
 
 Options:
-1 = print list of patches sorted by their first target
-2 = print list of patches after splitting and sorting by their targets
-    and optionally filter by files targeted by 2 or more patches 
+1 = print a list of patches sorted by their first target file
 
-0 = exit
+    Example:
+        mypatch.patch -> mycode.c, mycode.h, myothercode.c, ...
+
+2 = split patches targeting multiple files into seperated patches and then
+    print a list sorted by the target file.
+    Optionally show target files only that are altered by multiple patches.
+
+    Example:
+        mypatch.patch                                   -> mycode.c
+        my2ndpatch.patch                                -> mycode.c
+        my_other_patch_that_fixes_something_else.patch  -> mycode.c
+
+0 = Exit
 """)
 
 
