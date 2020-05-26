@@ -190,13 +190,13 @@ while True:
             print("\nOutput is sorted by target file.\n\n")
 #            for item in sortedSplittedPatchDict:
 #                print(item[0], "->", item[1])
-            target = PrettyTable()
-            target.field_names = ["Patch file", "target file"]
-            target.align["Patch file"] = "l"
-            target.align["target file"] = "l"
+            outputTable = PrettyTable()
+            outputTable.field_names = ["Patch file", "target file"]
+            outputTable.align["Patch file"] = "l"
+            outputTable.align["target file"] = "l"
             for item in sortedSplittedPatchDict:
-                target.add_row([item[0], item[1]])
-            print(target)
+                outputTable.add_row([item[0], item[1]])
+            print(outputTable)
             print("\n\n")
 
             print("I can filter this list and show only files that are")
@@ -244,16 +244,3 @@ exit()
 # for patch in sorted_d:
 
 #    print('{:<95s}{:<70s}'.format(patch[0], patch[1]))
-
-
-# search for target file matches
-
-"""
-        target = PrettyTable()
-        target.field_names = ["Patch file", "target file"]
-        target.align["Patch file"] = "l"
-        target.align["target file"] = "l"
-        for item in sortedpatchDictBefore:
-            target.add_row([item[0], item[1]])
-        print(target)
-"""
