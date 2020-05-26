@@ -75,29 +75,32 @@ def returnSingleDiff(self):
 
 
 # Main loop
-print("""
-Patch comparison
 
-Options:
-1 = print a list of patches sorted by their first target file
+def printHelp():
+    print("""
+    Patch comparison
 
-    Example:
-        mypatch.patch -> mycode.c, mycode.h, myothercode.c, ...
+    Options:
+    1 = print a list of patches sorted by their first target file
 
-2 = split patches targeting multiple files into seperated patches and then
-    print a list sorted by the target file.
-    Optionally show target files only that are altered by multiple patches.
+        Example:
+            mypatch.patch -> mycode.c, mycode.h, myothercode.c, ...
 
-    Example:
-        mypatch.patch                                   -> mycode.c
-        my2ndpatch.patch                                -> mycode.c
-        my_other_patch_that_fixes_something_else.patch  -> mycode.c
+    2 = split patches targeting multiple files into seperated patches and then
+        print a list sorted by the target file.
+        Optionally show target files only that are altered by multiple patches.
 
-0 = Exit
-""")
+        Example:
+            mypatch.patch                                   -> mycode.c
+            my2ndpatch.patch                                -> mycode.c
+            my_other_patch_that_fixes_something_else.patch  -> mycode.c
+
+    0 = Exit
+    """)
 
 
 while True:
+    printHelp()
     mainInput = input("Enter a number: ")  # Select what to do
     if not mainInput == "0":  # for any step we need a working directory
         print("Current directory:", Path.cwd())
@@ -187,13 +190,13 @@ while True:
             print("\nOutput is sorted by target file.\n\n")
 #            for item in sortedSplittedPatchDict:
 #                print(item[0], "->", item[1])
-            x = PrettyTable()
-            x.field_names = ["Patch file", "target file"]
-            x.align["Patch file"] = "l"
-            x.align["target file"] = "l"
+            target = PrettyTable()
+            target.field_names = ["Patch file", "target file"]
+            target.align["Patch file"] = "l"
+            target.align["target file"] = "l"
             for item in sortedSplittedPatchDict:
-                x.add_row([item[0], item[1]])
-            print(x)
+                target.add_row([item[0], item[1]])
+            print(target)
             print("\n\n")
 
             print("I can filter this list and show only files that are")
@@ -201,18 +204,18 @@ while True:
             if input("Should I do that? (y/n) ") == "y":
                 print()
 
-                adict = {}
+                multipleTargets = {}
                 for patchfile, targetfile in sortedSplittedPatchDict:
-                    try:
-                        adict[targetfile].append(patchfile)
+                    try: #try to append. If it fails the list does not exist
+                        multipleTargets[targetfile].append(patchfile)
                     except:
-                        adict[targetfile] = []
-                        adict[targetfile].append(patchfile)
+                        multipleTargets[targetfile] = [] #create list
+                        multipleTargets[targetfile].append(patchfile)
 
-                for x in adict:
-                    if len(adict[x]) > 1:
-                        print(x, "is affected by:")
-                        for y in adict[x]:
+                for target in multipleTargets:
+                    if len(multipleTargets[target]) > 1:
+                        print(target, "is affected by:")
+                        for y in multipleTargets[target]:
                             print(y)
                         print()
 
@@ -233,6 +236,7 @@ while True:
         mainInput = input("Invalid input. Enter a number: ")
 
 
+
 exit()
 
 
@@ -245,11 +249,11 @@ exit()
 # search for target file matches
 
 """
-        x = PrettyTable()
-        x.field_names = ["Patch file", "target file"]
-        x.align["Patch file"] = "l"
-        x.align["target file"] = "l"
+        target = PrettyTable()
+        target.field_names = ["Patch file", "target file"]
+        target.align["Patch file"] = "l"
+        target.align["target file"] = "l"
         for item in sortedpatchDictBefore:
-            x.add_row([item[0], item[1]])
-        print(x)
+            target.add_row([item[0], item[1]])
+        print(target)
 """
