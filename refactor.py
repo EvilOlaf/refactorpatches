@@ -18,7 +18,6 @@
 """
 
 
-from prettytable import PrettyTable
 from pathlib import Path
 import os
 import re
@@ -188,15 +187,8 @@ while True:
             sortedSplittedPatchDict = sorted(
                 splittedPatchDict.items(), key=lambda kv: kv[1])
             print("\nOutput is sorted by target file.\n\n")
-#            for item in sortedSplittedPatchDict:
-#                print(item[0], "->", item[1])
-            outputTable = PrettyTable()
-            outputTable.field_names = ["Patch file", "target file"]
-            outputTable.align["Patch file"] = "l"
-            outputTable.align["target file"] = "l"
             for item in sortedSplittedPatchDict:
-                outputTable.add_row([item[0], item[1]])
-            print(outputTable)
+                print(item[0], "->", item[1])
             print("\n\n")
 
             print("I can filter this list and show only files that are")
