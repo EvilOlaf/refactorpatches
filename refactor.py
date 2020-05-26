@@ -198,34 +198,25 @@ while True:
 
             print("I can filter this list and show only files that are")
             print("target of multiple patches so you could merge them.")
-            print("(Consider this feature experimental but safe to use)")
             if input("Should I do that? (y/n) ") == "y":
                 print()
 
-                def yield_lines():
-                    for line in sortedSplittedPatchDict:
-                        yield line
-                gen1 = yield_lines()
-
-                # prefeed comparator
-                patchTupleA = next(gen1)
-                patchTupleB = next(gen1)
-                patcha = patchTupleA[0]
-                patchb = patchTupleB[0]
-                targetA = patchTupleA[1]
-                targetB = patchTupleB[1]
-                for _ in gen1:
+                adict = {}
+                for patchfile, targetfile in sortedSplittedPatchDict:
                     try:
-                        if targetA == targetB:
-                            print(patcha + ",", patchb, "->", targetA)
-                        targetA = targetB  # shift b to a
-                        patchTupleA = patchTupleB
-                        patcha = patchb
-                        patchTupleB = next(gen1)  # refill b
-                        patchb = patchTupleB[0]
-                        targetB = patchTupleB[1]
+                        adict[targetfile].append(patchfile)
                     except:
-                        pass  # not sure what causes this to fail on some folders
+                        adict[targetfile] = []
+                        adict[targetfile].append(patchfile)
+
+                for x in adict:
+                    if len(adict[x]) > 1:
+                        print(x, "is affected by:")
+                        for y in adict[x]:
+                            print(y)
+                        print()
+
+
             print("\n")
 
         else:
