@@ -60,10 +60,11 @@ def returnAllDiffsAsTuple(self):
     # "diff" seem not to be included in all patches
     difflist = []
     for line in self:
-        if re.search(r"^\+{3} b/Makefile}", line):
-            MakefileFound = 1
-        if re.search(r"^\+SUBLEVEL", line) and MakefileFound == 1:
-            return("upstream")
+        if skipUpstream == "y":
+            if re.search(r"^\+{3} b/Makefile}", line):
+                MakefileFound = 1 # memorize match
+            if re.search(r"^\+SUBLEVEL", line) and MakefileFound == 1:
+                return("upstream")
 
         if re.search(r"^\+{3}\s", line):
             # append and strip line break
@@ -118,6 +119,7 @@ while True:
         readline.set_completer_delims(' \t\n=')
         readline.parse_and_bind("tab: complete")
 
+#       CHANGE WORKING DIRECTORY
         try:
             os.chdir(os.path.join(Path.cwd(),
                                   input("Select patch folder (you can tab-complete): ")))
@@ -126,6 +128,14 @@ while True:
             exit()
         print("Working directory is now:", Path.cwd())
         print()
+
+#       SKIP UPSTREAM
+        print("I can detect patches from Linux upstream (like \"patch-5.4.41-42.patch\")")
+        print("by matching \"+++ b/Makefile\" and afterwards \"+SUBLEVEL\".")
+        skipUpstream = input("Should I ignore those? (y/n) ")
+        print(skipUpstream)
+        while skipUpstream != "y" and skipUpstream != "n":
+            skipUpstream = input("Make a proper decision, pal! (y/n): ")
 
         # for any step we need the patchlist beforehand
         print("Grabbing all .patch files", end='')
@@ -204,10 +214,10 @@ while True:
 
                 multipleTargets = {}
                 for patchfile, targetfile in sortedSplittedPatchDict:
-                    try: #try to append. If it fails the list does not exist
+                    try:  # try to append. If it fails the list does not exist
                         multipleTargets[targetfile].append(patchfile)
                     except:
-                        multipleTargets[targetfile] = [] #create list
+                        multipleTargets[targetfile] = []  # create list
                         multipleTargets[targetfile].append(patchfile)
 
                 for target in multipleTargets:
@@ -216,7 +226,6 @@ while True:
                         for y in multipleTargets[target]:
                             print(y)
                         print()
-
 
             print("\n")
 
@@ -232,7 +241,6 @@ while True:
 
     else:
         mainInput = input("Invalid input. Enter a number: ")
-
 
 
 exit()
