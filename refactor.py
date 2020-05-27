@@ -60,6 +60,11 @@ def returnAllDiffsAsTuple(self):
     # "diff" seem not to be included in all patches
     difflist = []
     for line in self:
+        if re.search(r"^\+{3} b/Makefile}", line):
+            MakefileFound = 1
+        if re.search(r"^\+SUBLEVEL", line) and MakefileFound == 1:
+            return("upstream")
+
         if re.search(r"^\+{3}\s", line):
             # append and strip line break
             difflist.append(line.strip('\n').strip("+++ b"))
@@ -139,7 +144,8 @@ while True:
         for patchfile in PatchFilesInFolder:
             with open(patchfile, encoding="utf-8", errors="replace") as file:
                 diffs = returnAllDiffsAsTuple(file)
-                patchDictBefore[patchfile] = diffs
+                if not diffs == "upstream":
+                    patchDictBefore[patchfile] = diffs
         print(" - OK")
 
     if mainInput == "1":  # print list of patches sorted by their first target
