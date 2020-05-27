@@ -236,3 +236,34 @@ exit()
 # for patch in sorted_d:
 
 #    print('{:<95s}{:<70s}'.format(patch[0], patch[1]))
+
+
+"""
+# for splitting patch files without dependency
+diff_file = open('diff.txt', 'r')
+diff_str = diff_file.read()
+diff_split = ['diff --git%s' % x for x in diff_str.split('diff --git') \
+              if x.strip()]
+print diff_split
+
+
+###############
+
+
+# option skip incremental upstream kernel patches 
+# Sample:
+
+diff --git a/Makefile b/Makefile
+index d252219666fd..713f93cceffe 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 5
+ PATCHLEVEL = 6
+-SUBLEVEL = 13
++SUBLEVEL = 14
+ EXTRAVERSION =
+ NAME = Kleptomaniac Octopus
+
+"""
